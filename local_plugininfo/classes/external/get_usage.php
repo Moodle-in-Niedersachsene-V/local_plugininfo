@@ -1,5 +1,28 @@
 <?php
 // This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * External function: get_usage
+ * Gibt die tatsächliche Nutzung von Plugins in Kursen zurück.
+ *
+ * @package    local_plugininfo
+ * @copyright  2026 Moodle in Niedersachsen e. V.
+ * @license    https://www.gnu.org/licenses/gpl-3.0.html GNU GPL v3 or later
+ */
+
 namespace local_plugininfo\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -22,9 +45,13 @@ class get_usage extends external_api {
         return new external_function_parameters([]);
     }
 
+    /**
+     * @return array
+     */
     public static function execute(): array {
         global $DB;
 
+        // Berechtigungsprüfung: nur Site-Admins / Manager mit site:config.
         $context = \context_system::instance();
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
@@ -39,8 +66,8 @@ class get_usage extends external_api {
                 ORDER BY usage_count DESC";
         foreach ($DB->get_records_sql($sql) as $row) {
             $activities[] = [
-                'name'        => $row->modname,
-                'component'   => 'mod_' . $row->modname,
+                'name'        => clean_param($row->modname, PARAM_ALPHANUMEXT),
+                'component'   => 'mod_' . clean_param($row->modname, PARAM_ALPHANUMEXT),
                 'usage_count' => (int)$row->usage_count,
             ];
         }
@@ -54,8 +81,8 @@ class get_usage extends external_api {
                 ORDER BY usage_count DESC";
         foreach ($DB->get_records_sql($sql) as $row) {
             $formats[] = [
-                'name'        => $row->format,
-                'component'   => 'format_' . $row->format,
+                'name'        => clean_param($row->format, PARAM_ALPHANUMEXT),
+                'component'   => 'format_' . clean_param($row->format, PARAM_ALPHANUMEXT),
                 'usage_count' => (int)$row->usage_count,
             ];
         }
@@ -69,8 +96,8 @@ class get_usage extends external_api {
                 ORDER BY usage_count DESC";
         foreach ($DB->get_records_sql($sql) as $row) {
             $questiontypes[] = [
-                'name'        => $row->qtype,
-                'component'   => 'qtype_' . $row->qtype,
+                'name'        => clean_param($row->qtype, PARAM_ALPHANUMEXT),
+                'component'   => 'qtype_' . clean_param($row->qtype, PARAM_ALPHANUMEXT),
                 'usage_count' => (int)$row->usage_count,
             ];
         }
@@ -83,8 +110,8 @@ class get_usage extends external_api {
                 ORDER BY usage_count DESC";
         foreach ($DB->get_records_sql($sql) as $row) {
             $blocks[] = [
-                'name'        => $row->blockname,
-                'component'   => 'block_' . $row->blockname,
+                'name'        => clean_param($row->blockname, PARAM_ALPHANUMEXT),
+                'component'   => 'block_' . clean_param($row->blockname, PARAM_ALPHANUMEXT),
                 'usage_count' => (int)$row->usage_count,
             ];
         }
@@ -98,8 +125,8 @@ class get_usage extends external_api {
                 ORDER BY usage_count DESC";
         foreach ($DB->get_records_sql($sql) as $row) {
             $filters[] = [
-                'name'        => $row->filter,
-                'component'   => 'filter_' . $row->filter,
+                'name'        => clean_param($row->filter, PARAM_ALPHANUMEXT),
+                'component'   => 'filter_' . clean_param($row->filter, PARAM_ALPHANUMEXT),
                 'usage_count' => (int)$row->usage_count,
             ];
         }
